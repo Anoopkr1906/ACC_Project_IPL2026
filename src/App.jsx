@@ -1,120 +1,187 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
+import accLogo from './assets/acc-logo.png'
+import LandingPage from './pages/LandingPage'
+import ProjectIPL from './pages/ProjectIPL'
 
-function App() {
-  const [count, setCount] = useState(0)
+/* ───────── nav config ───────── */
+const SECTION_LINKS = [
+  { label: 'About', href: '/#about' },
+  { label: 'Domains', href: '/#domains' },
+  { label: 'Events', href: '/#events' },
+  { label: 'Team', href: '/#team' },
+  { label: 'Contact', href: '/#contact' },
+]
+
+/* ── Navbar ── */
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [location])
+
+  const handleSectionClick = (e, href) => {
+    // If we're already on the home page, scroll to the section
+    if (location.pathname === '/' && href.startsWith('/#')) {
+      e.preventDefault()
+      const id = href.replace('/#', '')
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <nav
+      id="navbar"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        scrolled
+          ? 'bg-black/80 backdrop-blur-xl border-b border-white/5'
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16 lg:h-20">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <img
+            src={accLogo}
+            alt="ACC Logo"
+            className="w-10 h-10 lg:w-12 lg:h-12 rounded-full border border-white/10 bg-white object-contain p-0.5 group-hover:border-white/30 transition-all duration-300"
+          />
+          <div className="flex flex-col leading-tight">
+            <span className="text-white font-heading text-lg font-bold tracking-wide">ACC</span>
+            <span className="text-white/40 text-[10px] tracking-[0.2em] uppercase font-medium">NIT Jamshedpur</span>
+          </div>
+        </Link>
+
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-8">
+          {SECTION_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={(e) => handleSectionClick(e, link.href)}
+              className="text-white/50 hover:text-white text-sm tracking-wide transition-colors duration-300 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-px after:bg-white after:transition-all after:duration-300 hover:after:w-full"
+            >
+              {link.label}
+            </a>
+          ))}
+
+          {/* Project IPL — separate page link */}
+          <Link
+            to="/project-ipl"
+            className={`text-sm tracking-wide transition-colors duration-300 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-px after:bg-white after:transition-all after:duration-300 hover:after:w-full ${
+              location.pathname === '/project-ipl'
+                ? 'text-white after:w-full'
+                : 'text-white/50 hover:text-white'
+            }`}
+          >
+            Project IPL
+          </Link>
+
+          <Link
+            to="/#contact"
+            className="ml-2 px-5 py-2 text-sm text-black bg-white rounded-full font-medium hover:bg-white/90 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+          >
+            Join Us
+          </Link>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
+
+        {/* Mobile burger */}
         <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          id="mobile-menu-toggle"
+          className="md:hidden text-white/70 hover:text-white transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle navigation"
         >
-          Count is {count}
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {mobileOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
         </button>
-      </section>
+      </div>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/5 animate-fade-in-up" style={{ animationDuration: '0.3s' }}>
+          <div className="px-6 py-6 flex flex-col gap-4">
+            {SECTION_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={(e) => handleSectionClick(e, link.href)}
+                className="text-white/60 hover:text-white text-lg transition-colors"
+              >
+                {link.label}
               </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+            ))}
+            <Link to="/project-ipl" className="text-white/60 hover:text-white text-lg transition-colors">
+              Project IPL
+            </Link>
+            <a href="/#contact" className="mt-2 px-5 py-3 text-center text-black bg-white rounded-full font-medium">
+              Join Us
+            </a>
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      )}
+    </nav>
+  )
+}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+/* ── Footer ── */
+function Footer() {
+  return (
+    <footer className="border-t border-white/5 py-8 px-6">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <img src={accLogo} alt="ACC" className="w-7 h-7 rounded-full bg-white p-0.5 object-contain" />
+          <span className="text-white/30 text-sm">
+            © {new Date().getFullYear()} Analytics & Consultancy Club, NIT Jamshedpur
+          </span>
+        </div>
+        <div className="flex items-center gap-6">
+          {SECTION_LINKS.map((link) => (
+            <a key={link.label} href={link.href} className="text-white/20 hover:text-white/50 text-xs tracking-wide transition-colors">
+              {link.label}
+            </a>
+          ))}
+          <Link to="/project-ipl" className="text-white/20 hover:text-white/50 text-xs tracking-wide transition-colors">
+            Project IPL
+          </Link>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+/* ═══════════════════════════════════════════════
+   APP — with routing
+   ═══════════════════════════════════════════════ */
+function App() {
+  return (
+    <BrowserRouter>
+      <div className="noise-bg bg-surface text-white min-h-screen font-sans antialiased selection:bg-white/10">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/project-ipl" element={<ProjectIPL />} />
+        </Routes>
+        <div className="gradient-line" />
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
