@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-do
 import './App.css'
 import accLogo from './assets/acc-logo.png'
 import LandingPage from './pages/LandingPage'
-import ProjectIPL from './pages/ProjectIPL'
+import Registration from './pages/Registration'
 
 /* ───────── nav config ───────── */
 const SECTION_LINKS = [
@@ -76,16 +76,16 @@ function Navbar() {
             </a>
           ))}
 
-          {/* Project IPL — separate page link */}
+          {/* Register — separate page link */}
           <Link
-            to="/project-ipl"
+            to="/register"
             className={`text-sm tracking-wide transition-colors duration-300 relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-px after:bg-white after:transition-all after:duration-300 hover:after:w-full ${
-              location.pathname === '/project-ipl'
+              location.pathname === '/register'
                 ? 'text-white after:w-full'
                 : 'text-white/50 hover:text-white'
             }`}
           >
-            Project IPL
+            Register
           </Link>
 
           <Link
@@ -127,8 +127,8 @@ function Navbar() {
                 {link.label}
               </a>
             ))}
-            <Link to="/project-ipl" className="text-white/60 hover:text-white text-lg transition-colors">
-              Project IPL
+            <Link to="/register" className="text-white/60 hover:text-white text-lg transition-colors">
+              Register
             </Link>
             <a href="/#contact" className="mt-2 px-5 py-3 text-center text-black bg-white rounded-full font-medium">
               Join Us
@@ -157,8 +157,8 @@ function Footer() {
               {link.label}
             </a>
           ))}
-          <Link to="/project-ipl" className="text-white/20 hover:text-white/50 text-xs tracking-wide transition-colors">
-            Project IPL
+          <Link to="/register" className="text-white/20 hover:text-white/50 text-xs tracking-wide transition-colors">
+            Register
           </Link>
         </div>
       </div>
@@ -176,7 +176,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/project-ipl" element={<ProjectIPL />} />
+          <Route path="/register" element={<Registration />} />
         </Routes>
         <div className="gradient-line" />
         <Footer />
