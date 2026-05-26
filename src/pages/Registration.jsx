@@ -8,7 +8,7 @@ function Registration() {
         <p className="text-white/40 text-lg mb-8">Register for our upcoming event by clicking the button below.</p>
 
         <a
-          href={REGISTRATION_FORM_URL}
+          href="https://docs.google.com/forms/d/e/1FAIpQLSchtUEyTDLGuKJMxPjJ_yLztlBuc-PUcuIXoWR081zySF-QRg/viewform"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block px-8 py-3 bg-white text-black rounded-full font-medium hover:bg-white/90 transition-shadow shadow-md"
